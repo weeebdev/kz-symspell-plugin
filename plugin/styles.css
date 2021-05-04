@@ -1,0 +1,16 @@
+.wrongSpell {
+  /* color: red !important; */
+  text-decoration: underline;
+  text-decoration-color: red;
+  cursor: pointer;
+}
+
+.form-opened {
+  display: absolute;
+  left: 0;
+  top: 0;
+}
+
+.form-closed {
+  display: none;
+}
