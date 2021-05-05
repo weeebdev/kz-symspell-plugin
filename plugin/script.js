@@ -57,7 +57,6 @@ async function replaceText(element) {
       if (contentElement.textContent !== "") {
         newElement.appendChild(contentElement);
       }
-      console.log(words);
       element.replaceWith(newElement);
     }
   }
@@ -66,6 +65,9 @@ async function replaceText(element) {
 function openForm(wordRes, wordElement) {
   const selectElement = document.createElement("select");
   selectElement.className = "form-opened";
+  selectElement.selectedIndex = -1;
+  selectElement.innerHTML =
+    "<option value='' disabled selected style='display:none;'></option>";
   wordRes = [`${wordElement.textContent}, `, ...wordRes];
   for (res of wordRes) {
     const optionElement = document.createElement("option");
