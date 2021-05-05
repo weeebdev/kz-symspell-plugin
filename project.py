@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from re import I
 from symspellpy import SymSpell, Verbosity
 from flask import Flask, jsonify, request
 app = Flask(__name__)
@@ -24,7 +22,7 @@ def lookup_compound(): # route handler function
     input_term = ''
     if "compound" in body:
         input_term = body["compound"]
-    suggestions = sym_spell.lookup_compound(input_term, max_edit_distance=2)
+    suggestions = sym_spell.lookup_compound(input_term, max_edit_distance=2, transfer_casing=True, ignore_non_words=True)
     return jsonify(result=list(map(str, suggestions))), 200, {'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*'}
 
 @app.route("/lookup", methods=["POST"])

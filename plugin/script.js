@@ -1,3 +1,5 @@
+var regexP = /[а-яА-ЯәіңғүұққөӘІҢҒҮҰҚӨҺ]+/;
+
 replaceText(document.body);
 
 async function replaceText(element) {
@@ -8,22 +10,41 @@ async function replaceText(element) {
       let words = splitContent(element.textContent);
       const newElement = document.createElement("span");
 
-      for (let word of words) {
-        let wordRes = await checkWord(word);
-        const wordElement = document.createElement("span");
-        wordElement.textContent = word + " ";
+      let content = "";
 
-        if (wordRes.length !== 0) {
-          if (wordRes[0].split(", ")[1] !== "0") {
-            wordElement.className = "wrongSpell";
+      for (let i = 0; i < words.length; i++) {
+        let wordCheck = words[i]?.match(regexP)?.[0];
 
-            wordElement.onclick = (e) => {
-              openForm(wordRes, wordElement);
-            };
-          }
+        if (!wordCheck) {
+          content += (i ? " " : "") + words[i];
+          continue;
         }
 
-        newElement.appendChild(wordElement);
+        let wordRes = await checkWord(wordCheck);
+
+        if (wordRes.length === 0) {
+          content += (i ? " " : "") + words[i];
+          continue;
+        }
+
+        if (wordRes[0].split(", ")[1] !== "0") {
+          const contentElement = document.createElement("span");
+          contentElement.textContent = content;
+          content = "";
+          newElement.appendChild(contentElement);
+
+          const wordElement = document.createElement("span");
+          wordElement.textContent = (i ? " " : "") + words[i];
+          wordElement.className = "wrongSpell";
+
+          wordElement.onclick = (e) => {
+            openForm(wordRes, wordElement);
+          };
+
+          newElement.appendChild(wordElement);
+        } else {
+          content += (i ? " " : "") + words[i];
+        }
       }
 
       element.replaceWith(newElement);
@@ -34,10 +55,12 @@ async function replaceText(element) {
 function openForm(wordRes, wordElement) {
   const selectElement = document.createElement("select");
   selectElement.className = "form-opened";
+  wordRes = [`${wordElement.textContent}, `, ...wordRes];
   for (res of wordRes) {
     const optionElement = document.createElement("option");
-    optionElement.setAttribute("value", res.split(", ")[0]);
-    optionElement.textContent = res;
+    option = res.split(", ")[0];
+    optionElement.setAttribute("value", option);
+    optionElement.textContent = option;
     selectElement.appendChild(optionElement);
   }
   selectElement.onchange = (e) => {
@@ -53,7 +76,7 @@ function openForm(wordRes, wordElement) {
 
 function fixSpell(word, wordElement) {
   const newElement = document.createElement("span");
-  newElement.textContent = word;
+  newElement.textContent = wordElement.textContent.replace(regexP, word);
   wordElement.replaceWith(newElement);
 }
 
