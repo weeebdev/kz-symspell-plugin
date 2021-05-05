@@ -63,12 +63,19 @@ async function replaceText(element) {
 }
 
 function openForm(wordRes, wordElement) {
+  const containerElement = document.createElement("div");
+  containerElement.className = "form-opened";
+  const btnElement = document.createElement("button");
+  btnElement.textContent = "X";
+  btnElement.onclick = (e) => {
+    e.stopPropagation();
+    containerElement.className = "form-closed";
+  };
+  containerElement.appendChild(btnElement);
   const selectElement = document.createElement("select");
-  selectElement.className = "form-opened";
   selectElement.selectedIndex = -1;
   selectElement.innerHTML =
     "<option value='' disabled selected style='display:none;'></option>";
-  wordRes = [`${wordElement.textContent}, `, ...wordRes];
   for (res of wordRes) {
     const optionElement = document.createElement("option");
     option = res.split(", ")[0];
@@ -78,13 +85,14 @@ function openForm(wordRes, wordElement) {
   }
   selectElement.onchange = (e) => {
     e.stopPropagation();
-    wordElement.removeChild(selectElement);
+    wordElement.removeChild(containerElement);
     fixSpell(e.target.value, wordElement);
   };
   selectElement.onclick = (e) => {
     e.stopPropagation();
   };
-  wordElement.appendChild(selectElement);
+  containerElement.appendChild(selectElement);
+  wordElement.appendChild(containerElement);
 }
 
 function fixSpell(word, wordElement) {

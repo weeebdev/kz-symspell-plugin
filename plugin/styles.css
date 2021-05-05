@@ -3,12 +3,20 @@
   text-decoration: underline;
   text-decoration-color: red;
   cursor: pointer;
+  position: relative;
 }
 
 .form-opened {
-  display: absolute;
-  left: 0;
-  top: 0;
+  position: absolute;
+  display: flex;
+  left: 100%;
+  bottom: -100%;
+  z-index: 99;
+}
+
+.form-opened > select {
+  background: lightgreen;
+  box-sizing: border-box;
 }
 
 .form-closed {
