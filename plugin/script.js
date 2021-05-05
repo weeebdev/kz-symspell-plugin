@@ -10,43 +10,54 @@ async function replaceText(element) {
       let words = splitContent(element.textContent);
       const newElement = document.createElement("span");
 
-      let content = "";
-
       for (let i = 0; i < words.length; i++) {
         let wordCheck = words[i]?.match(regexP)?.[0];
 
         if (!wordCheck) {
-          content += (i ? " " : "") + words[i];
+          words[i] = (i ? " " : "") + words[i];
           continue;
         }
 
         let wordRes = await checkWord(wordCheck);
 
         if (wordRes.length === 0) {
-          content += (i ? " " : "") + words[i];
+          words[i] = (i ? " " : "") + words[i];
           continue;
         }
 
         if (wordRes[0].split(", ")[1] !== "0") {
-          const contentElement = document.createElement("span");
-          contentElement.textContent = content;
-          content = "";
-          newElement.appendChild(contentElement);
-
           const wordElement = document.createElement("span");
-          wordElement.textContent = (i ? " " : "") + words[i];
+          wordElement.textContent = words[i];
           wordElement.className = "wrongSpell";
 
           wordElement.onclick = (e) => {
             openForm(wordRes, wordElement);
           };
 
-          newElement.appendChild(wordElement);
+          words[i] = wordElement;
         } else {
-          content += (i ? " " : "") + words[i];
+          words[i] = (i ? " " : "") + words[i];
         }
       }
 
+      let contentElement = document.createElement("span");
+      for (let i = 0; i < words.length; i++) {
+        if (typeof words[i] === "string") {
+          contentElement.textContent += words[i];
+        } else {
+          if (contentElement.textContent !== "") {
+            contentElement.textContent += " ";
+            newElement.appendChild(contentElement);
+            contentElement = document.createElement("span");
+            contentElement.textContent = " ";
+          }
+          newElement.appendChild(words[i]);
+        }
+      }
+      if (contentElement.textContent !== "") {
+        newElement.appendChild(contentElement);
+      }
+      console.log(words);
       element.replaceWith(newElement);
     }
   }
