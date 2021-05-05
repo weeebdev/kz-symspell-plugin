@@ -51,6 +51,14 @@ async function replaceText(element) {
             contentElement = document.createElement("span");
             contentElement.textContent = " ";
           }
+
+          if (i > 0) {
+            if (typeof words[i - 1] !== "string") {
+              contentElement.textContent += " ";
+              newElement.appendChild(contentElement);
+              contentElement = document.createElement("span");
+            }
+          }
           newElement.appendChild(words[i]);
         }
       }
